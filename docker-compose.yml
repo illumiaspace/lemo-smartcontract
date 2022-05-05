@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  ganache-cli:
+    image: trufflesuite/ganache-cli:latest
+    entrypoint:
+      - node
+      - /app/ganache-core.docker.cli.js
+      - --deterministic
+      - --mnemonic
+      - ${MNEMONIC}
+      - --networkId
+      - '1337'
+      - -b
+      - ${BLOCKSPEED}
+      - --gasLimit
+      - ${GASLIMIT}
+    env_file:
+      - .env
+    ports:
+      - "8545:8545"
+  
+  hardhat-deploy:
+    user: $UID
+    depends_on:
+      - ganache-cli
+    build:
+      context: ./
+    environment:
+      - IS_DOCKER=true
+    volumes:
+      - ./:/hardhat
+      - /node_modules
+    links:
+      - ganache-cli
+    command: npm run deploy:docker

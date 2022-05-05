@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
  * Author: Nick Mudge <nick@perfectabstractions.com> (https://twitter.com/mudgen)
  * EIP-2535 Diamonds: https://eips.ethereum.org/EIPS/eip-2535
 /******************************************************************************/
-import "hardhat/console.sol";
 import { IDiamondCut } from "../interfaces/IDiamondCut.sol";
 
 library LibDiamond {
@@ -95,10 +94,7 @@ library LibDiamond {
     for (uint256 selectorIndex; selectorIndex < _functionSelectors.length; selectorIndex++) {
       bytes4 selector = _functionSelectors[selectorIndex];
       address oldFacetAddress = ds.selectorToFacetAndPosition[selector].facetAddress;
-      // require(oldFacetAddress == address(0), "LibDiamondCut: Can't add function that already exists");
-      if(oldFacetAddress != address(0)) {
-        continue;
-      }
+      require(oldFacetAddress == address(0), "LibDiamondCut: Can't add function that already exists");
       addFunction(ds, selector, selectorPosition, _facetAddress);
       selectorPosition++;
     }
