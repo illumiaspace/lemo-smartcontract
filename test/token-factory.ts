@@ -63,6 +63,11 @@ describe("Basket Factory", () => {
   });
 
   it("should deploy MockToken into basket", async () => {
+    basketFacet = await ethers.getContractAt("BasketFacet", diamondAddress);
+    // eslint-disable-next-line no-unused-expressions
+    expect(basketFacet.address).to.not.be.null;
+    console.log("basket facet:", basketFacet.address);
+
     const MockToken = await ethers.getContractFactory("MockToken");
     const mockToken = await MockToken.connect(signer).deploy(
       "MockERC20",
@@ -71,6 +76,12 @@ describe("Basket Factory", () => {
     const mToken = await mockToken.deployed();
     await mToken.connect(signer).mint(parseEther("100000000000000"), owner);
     await mToken.connect(signer).transfer(diamondAddress, parseEther("1000"));
+
+    const supply = await mToken.balanceOf(owner);
+    console.log("supply:", supply.toString());
+
+    const contractSupply = await mToken.balanceOf(diamondAddress);
+    console.log("contract -supply:", contractSupply.toString());
 
     // eslint-disable-next-line no-unused-expressions
     expect(mToken.address).to.not.be.null;
