@@ -2,14 +2,8 @@ import { ethers } from "hardhat";
 import { Contract, Signer, utils } from "ethers";
 // eslint-disable-next-line node/no-extraneous-import
 import { BytesLike } from "@ethersproject/bytes";
-
-export const ADDRESSZERO = "0x0000000000000000000000000000000000000000";
-
-export const FacetCutAction = {
-  Add: 0,
-  Replace: 1,
-  Remove: 2,
-};
+// eslint-disable-next-line node/no-missing-import
+import { ADDRESSZERO, FacetCutAction } from "../utils/consts";
 
 export function getSelectors(contract: Contract) {
   const signatures: BytesLike[] = [];

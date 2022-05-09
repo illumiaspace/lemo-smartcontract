@@ -1,16 +1,17 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import { parseEther } from "ethers/lib/utils";
+import { Signer } from "ethers";
+
 import {
-  ADDRESSZERO,
   deployDiamond,
-  FacetCutAction,
   getSelectors,
   // eslint-disable-next-line node/no-missing-import
 } from "../scripts/deploy/diamond";
 // eslint-disable-next-line node/no-missing-import
 import { BasketFacet } from "../typechain";
-import { parseEther } from "ethers/lib/utils";
-import { Signer } from "ethers";
+// eslint-disable-next-line node/no-missing-import
+import { ADDRESSZERO, FacetCutAction } from "../scripts/utils/consts";
 
 describe("Basket Factory", () => {
   let diamondAddress: string;

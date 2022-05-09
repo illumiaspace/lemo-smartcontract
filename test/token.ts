@@ -1,17 +1,18 @@
 import { ethers } from "hardhat";
+import { BigNumber, Contract, Signer } from "ethers";
+import { expect } from "chai";
+import { parseEther, parseUnits } from "ethers/lib/utils";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+
 import {
-  ADDRESSZERO,
   deployDiamond,
-  FacetCutAction,
   getSelectors,
   // eslint-disable-next-line node/no-missing-import
 } from "../scripts/deploy/diamond";
 // eslint-disable-next-line node/no-missing-import
 import { BasketFacet } from "../typechain";
-import { BigNumber, Contract, Signer } from "ethers";
-import { expect } from "chai";
-import { parseEther, parseUnits } from "ethers/lib/utils";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+// eslint-disable-next-line node/no-missing-import
+import { ADDRESSZERO, FacetCutAction } from "../scripts/utils/consts";
 
 describe("Token transaction", () => {
   let accounts: SignerWithAddress[];
