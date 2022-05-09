@@ -34,7 +34,7 @@ describe("Token Pancake Swap", () => {
     });
 
     beforeEach(async () => {
-      deadline = new Date().getTime() + 30;
+      deadline = Math.floor(Date.now() / 1000) + 30;
     });
 
     it("Should add liquidity Pace-WBNB pair", async () => {
@@ -77,6 +77,10 @@ describe("Token Pancake Swap", () => {
   });
 
   describe("Swap Test", () => {
+    beforeEach(async () => {
+      deadline = Math.floor(Date.now() / 1000) + 30;
+    });
+
     it("should swap between pace and lemo token", async () => {
       await pancakeRouter
         ?.connect(signer)
