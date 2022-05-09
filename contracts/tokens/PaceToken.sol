@@ -8,11 +8,11 @@ contract PaceToken is ERC20 {
     ERC20("Pace", "PACE")
     {}
 
-    function mint(uint256 _amount, address _issuer) external {
+    function mint(uint256 _amount, address _issuer) public onlyOwner {
         _mint(_issuer, _amount);
     }
 
-    function burn(uint256 _amount, address _from) external {
+    function burn(uint256 _amount, address _from) public onlyOwner {
         _burn(_from, _amount);
     }
 }
