@@ -4,15 +4,14 @@ import { ethers } from "hardhat";
 import { parseEther, parseUnits } from "ethers/lib/utils";
 
 // eslint-disable-next-line node/no-missing-import
-import { deployPancakeSwapTestnet } from "../scripts/deploy/token-swap";
-// eslint-disable-next-line node/no-missing-import
-import { MockToken } from "../typechain";
+import { deployPancakeSwapTestnet } from "../scripts/deploy/token-swap-test";
 
 describe("Token Pancake Swap", () => {
   let pancakeRouter: Contract | null;
-  let mockToken1: MockToken;
-  let mockToken2: MockToken;
+  const paceTokenAddress: string = "0x2F78d418742C93467A5B6A906cF17fB040F91CF9";
+  const lemoTokenAddress: string = "0xa20b0EAA5f46C69a2547DFA6539745270E5b3e5F";
   let signer: Signer;
+  let deadline: number;
 
   before(async () => {
     const accounts = await ethers.getSigners();
@@ -27,44 +26,70 @@ describe("Token Pancake Swap", () => {
     expect(pancakeRouter).to.not.be.null;
   });
 
-  // TODO: deploy token contract
-  it("should deploy 2 new token contracts for testing", async () => {
-    const MockToken = await ethers.getContractFactory("MockToken");
-    mockToken1 = await MockToken.connect(signer).deploy("Token1", "Token1");
-    mockToken2 = await MockToken.connect(signer).deploy("Token2", "Token2");
-
-    mockToken1 = await mockToken1.deployed();
-    mockToken2 = await mockToken2.deployed();
-
-    await mockToken1.mint(parseEther("1000000000"), await signer.getAddress());
-    const supply1 = await mockToken1.totalSupply();
-    expect(supply1).to.be.eq(parseEther("1000000000"));
-    await mockToken2.mint(parseEther("1000000000"), await signer.getAddress());
-    const supply2 = await mockToken2.totalSupply();
-    expect(supply2).to.be.eq(parseEther("1000000000"));
-  });
-
   describe("Liquidity Test", async () => {
     let wrapBnbAddress: string;
-    let token1Address: string;
 
     before(async () => {
       wrapBnbAddress = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";
-      token1Address = mockToken1.address;
     });
 
-    it("Should add liquidity Token1-WBNB pair", async () => {
-      const [amount1, amount2, liquidity] = await pancakeRouter
+    beforeEach(async () => {
+      deadline = new Date().getTime() + 30;
+    });
+
+    it("Should add liquidity Pace-WBNB pair", async () => {
+      await pancakeRouter
         ?.connect(signer)
         .addLiquidity(
-          token1Address,
+          paceTokenAddress,
           wrapBnbAddress,
-          parseEther("100000"),
-          parseEther("0.0041055"),
           parseEther("10000"),
-          parseEther("0.000000041055"),
+          parseEther("0.005"),
+          parseEther("1000"),
+          parseEther("0.0005"),
           await signer.getAddress(),
-          parseUnits("19195000", "wei")
+          parseUnits(deadline + "", "wei"),
+          {
+            gasPrice: 20000000000,
+            gasLimit: 5000000,
+          }
+        );
+    });
+
+    it("Should add liquidity Lemo-WBNB pair", async () => {
+      await pancakeRouter
+        ?.connect(signer)
+        .addLiquidity(
+          lemoTokenAddress,
+          wrapBnbAddress,
+          parseEther("10000"),
+          parseEther("0.005"),
+          parseEther("1000"),
+          parseEther("0.0005"),
+          await signer.getAddress(),
+          parseUnits(deadline + "", "wei"),
+          {
+            gasPrice: 20000000000,
+            gasLimit: 5000000,
+          }
+        );
+    });
+  });
+
+  describe("Swap Test", () => {
+    it("should swap between pace and lemo token", async () => {
+      await pancakeRouter
+        ?.connect(signer)
+        .swapExactTokensForTokens(
+          parseEther("1"),
+          parseEther("2"),
+          [lemoTokenAddress, paceTokenAddress],
+          await signer.getAddress(),
+          parseUnits(deadline + "", "wei"),
+          {
+            gasPrice: 20000000000,
+            gasLimit: 5000000,
+          }
         );
     });
   });
